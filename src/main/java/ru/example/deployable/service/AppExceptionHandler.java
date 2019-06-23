@@ -1,9 +1,11 @@
 package ru.example.deployable.service;
 
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +30,12 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 			.collect(Collectors.joining());
 		return ResponseEntity.badRequest()
 			.body(new AppError().setCode(message));
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+		return ResponseEntity.badRequest()
+				.body(new AppError().setCode("InvalidArgument"));
 	}
 
 	@ExceptionHandler(value = RealmNotFoundException.class)
