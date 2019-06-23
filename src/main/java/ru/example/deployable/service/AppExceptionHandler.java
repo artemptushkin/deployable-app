@@ -1,4 +1,4 @@
-package ru.example.deployable.converter;
+package ru.example.deployable.service;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
@@ -6,9 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.example.deployable.domain.AppError;
+import ru.example.deployable.domain.RealmNotFoundException;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -24,7 +26,14 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 			.stream()
 			.map(DefaultMessageSourceResolvable::getDefaultMessage)
 			.collect(Collectors.joining());
+		return ResponseEntity.badRequest()
+			.body(new AppError().setCode(message));
+	}
+
+	@ExceptionHandler(value = RealmNotFoundException.class)
+	public ResponseEntity<AppError> onRealmNotFoundException(RealmNotFoundException exception) {
 		return new ResponseEntity<>(
-			new AppError().setCode(message), headers, HttpStatus.BAD_REQUEST);
+			new AppError().setCode(exception.getMessage()), HttpStatus.NOT_FOUND
+		);
 	}
 }

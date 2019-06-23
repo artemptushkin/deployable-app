@@ -1,21 +1,17 @@
 package ru.example.deployable.domain;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Data;
 import javax.validation.constraints.NotEmpty;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 @Data
-@XmlRootElement(name = "realm")
-@XmlAccessorType(XmlAccessType.FIELD)
+@JacksonXmlRootElement(localName = "realm")
 public class RealmRequest {
-	@NotEmpty
+	@NotEmpty(message = "InvalidRealmName")
 	@UniqueByName(message = "DuplicateRealmName")
-	@XmlAttribute
+	@JacksonXmlProperty(isAttribute = true)
 	private String name;
-	@XmlElement
+	@JacksonXmlProperty
 	private String description;
 }
