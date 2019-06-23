@@ -1,0 +1,1 @@
+INSERT INTO REALM (id, name, description) values (1, 'hello-realm', 'some realm')
